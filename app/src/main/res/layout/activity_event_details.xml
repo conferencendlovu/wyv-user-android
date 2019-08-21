@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".activities.EventDetailsActivity">
+
+    <include
+        android:id="@+id/event_details_toolbar"
+        layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/event_details_sliderLayout"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" >
+
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/event_details_viewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </androidx.viewpager.widget.ViewPager>
+
+                <com.viewpagerindicator.CirclePageIndicator
+                    android:id="@+id/event_details_indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="bottom"
+                    android:padding="10dp"
+                    app:centered="true"
+                    app:fillColor="#df0623"
+                    app:pageColor="#fff"
+                    app:snap="false" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/event_details_title"
+                android:textSize="28sp"
+                android:text="@string/default_event_title"
+                android:layout_margin="10dp"
+                fontPath="fonts/alternative.ttf"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingPrefix" />
+
+            <TextView
+                android:id="@+id/event_details_overview"
+                android:textSize="18sp"
+                android:text="@string/lorem_ipsum"
+                android:layout_margin="10dp"
+                android:gravity="center_horizontal"
+                fontPath="fonts/secondary.ttf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingPrefix" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:gravity="center_horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/event_details_date"
+                    android:textSize="16sp"
+                    android:text="@string/default_date"
+                    android:drawableStart="@drawable/icon_calender"
+                    android:drawablePadding="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/event_details_time"
+                    android:textSize="16sp"
+                    android:text="@string/default_time"
+                    android:drawableStart="@drawable/icon_time"
+                    android:drawablePadding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                app:cardElevation="5dp"
+                android:layout_margin="10dp"
+                app:cardCornerRadius="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/event_details_btnRateVibe"
+                            android:drawableTop="@drawable/icon_rate_vibe"
+                            android:drawablePadding="10dp"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:text="Rate Vibe"
+                            android:layout_weight="0.33"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+
+                        <Button
+                            android:id="@+id/event_details_btnCheckIn"
+                            android:drawableTop="@drawable/icon_check_in"
+                            android:drawablePadding="10dp"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:text="Check In"
+                            android:layout_weight="0.33"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+
+                        <Button
+                            android:id="@+id/event_details_btnShareVibe"
+                            android:drawableTop="@drawable/icon_share_vibe"
+                            style="?android:attr/buttonBarButtonStyle"
+                            android:drawablePadding="10dp"
+                            android:text="Share Vibe"
+                            android:layout_weight="0.33"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:paddingTop="0dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:textSize="20sp"
+                            android:id="@+id/event_details_tvRate"
+                            android:layout_weight="0.33"
+                            android:textAlignment="center"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:textSize="20sp"
+                            android:id="@+id/event_details_tvGoing"
+                            android:layout_weight="0.33"
+                            android:textAlignment="center"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:textSize="20sp"
+                            android:textAlignment="center"
+                            android:id="@+id/event_details_tvShare"
+                            android:layout_weight="0.33"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/event_details_tvFee"
+                android:drawableStart="@drawable/icon_ticket"
+                android:textSize="30sp"
+                android:padding="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <fragment
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="20dp"
+                android:id="@+id/event_details_map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                tools:context=".MapActivity" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

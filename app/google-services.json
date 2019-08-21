@@ -1,0 +1,93 @@
+{
+  "project_info": {
+    "project_number": "1062004872466",
+    "firebase_url": "https://whatsyourvibe.firebaseio.com",
+    "project_id": "whatsyourvibe",
+    "storage_bucket": "whatsyourvibe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1062004872466:android:fc44932200829da8",
+        "android_client_info": {
+          "package_name": "za.co.whatsyourvibe.business"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1062004872466-lp5dschtar0q2fvp07qlmoo8vsgd37m4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "za.co.whatsyourvibe.business",
+            "certificate_hash": "05e4de3efcc13e74f205f4a1f8a3fbca2568c1c9"
+          }
+        },
+        {
+          "client_id": "1062004872466-jeruaq2aaci2cft5m8env7j95a74e8b0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5RBjSX_LBeMMMBVgvY333EXsy0OgdHCI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1062004872466-jeruaq2aaci2cft5m8env7j95a74e8b0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1062004872466:android:0767ab3e3faa2140",
+        "android_client_info": {
+          "package_name": "za.co.whatsyourvibe.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1062004872466-208ia0plejp781g4ckps1pua63qqk7g9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "za.co.whatsyourvibe.user",
+            "certificate_hash": "b2a4cae20fa6e999d02eea3aa85f764f17a4ddfa"
+          }
+        },
+        {
+          "client_id": "1062004872466-2qu4uu51cg9auii815kks9v1h25cg8so.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "za.co.whatsyourvibe.user",
+            "certificate_hash": "05e4de3efcc13e74f205f4a1f8a3fbca2568c1c9"
+          }
+        },
+        {
+          "client_id": "1062004872466-jeruaq2aaci2cft5m8env7j95a74e8b0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5RBjSX_LBeMMMBVgvY333EXsy0OgdHCI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1062004872466-jeruaq2aaci2cft5m8env7j95a74e8b0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="180dp">
+
+    <ImageView
+        android:id="@+id/item_event_coverImage"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/theater" />
+
+    <TextView
+        android:id="@+id/item_event_title"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        android:text="@string/default_event_title"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="120dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/item_event_date"
+        android:textSize="16sp"
+        android:text="@string/default_date"
+        android:drawableStart="@drawable/icon_calender"
+        android:drawablePadding="10dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/item_event_time"
+        android:textSize="16sp"
+        android:text="@string/default_time"
+        android:drawableStart="@drawable/icon_time"
+        android:drawablePadding="10dp"
+        android:layout_marginStart="300dp"
+        android:layout_marginTop="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#00ff97</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorSecondary">#505659</color>
+    <color name="colorAccent">#141211</color>
+    <color name="color_gradient_start">#00ff97</color>
+    <color name="color_gradient_end">#00fff2</color>
+    <color name="color_icon_secondary">#00ff97</color>
+    <color name="color_text_secondary">#00ff97</color>
+    <color name="color_primary_font">#505659</color>
+    <color name="color_overlay">#000000</color>
+</resources>
