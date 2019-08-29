@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="5dp"
+    android:layout_margin="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="150dp">
+
+    <ImageView
+        android:id="@+id/item_category_photo"
+        android:src="@drawable/concerts"
+        android:scaleType="fitXY"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/concerts" />
+
+    <TextView
+        android:id="@+id/item_category_title"
+        android:textColor="#fff"
+        android:text="@string/concerts"
+        android:background="#99000000"
+        android:textAllCaps="true"
+        fontPath="fonts/bold.ttf"
+        android:textSize="28sp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingPrefix" />
+
+</androidx.cardview.widget.CardView>

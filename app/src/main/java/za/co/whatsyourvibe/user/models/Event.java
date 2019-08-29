@@ -23,6 +23,7 @@ public class Event implements Serializable {
     private int going;
     private int shares;
     private double rate;
+    private int rating;
 
     public Event() {
     }
@@ -177,5 +178,13 @@ public class Event implements Serializable {
 
     public void setImage3(String image3) {
         this.image3 = image3;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

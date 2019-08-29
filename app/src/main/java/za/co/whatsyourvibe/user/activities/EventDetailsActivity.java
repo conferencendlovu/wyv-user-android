@@ -10,17 +10,26 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.infideap.stylishwidget.view.AMeter;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -43,9 +52,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.viewpagerindicator.CirclePageIndicator;
 
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -86,6 +97,10 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
     private float distance[] = new float[1];
 
     private Event event;
+
+    private int rating;
+
+    private int vibeRate;
 
     private TextView mTitle;
 
@@ -165,11 +180,13 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
             eventId = event.getId();
 
+            vibeRate = event.getRating();
+
             going.setText(iGoing +"");
 
             share.setText(iShares+"");
 
-            rate.setText(event.getRate()+ "");
+            rate.setText(event.getRating()+"");
 
             fee.setText("R " + event.getEventEntryFee());
 
@@ -294,6 +311,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
     }
 
     private void rateVibe() {
+
+        showVibeRater();
 
         Location.distanceBetween(
                 lat,
@@ -448,7 +467,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         mMap.addMarker(new MarkerOptions()
                 .icon(icon)
                 .position(eventLocation)
-                .title(event.getName()));
+                .title(title.getText().toString()));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation, zoomLevel));
 
@@ -568,5 +587,77 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                 }
             }
         }
+    }
+
+    private void showVibeRater() {
+
+        //before inflating the custom alert dialog layout, we will get the current activity viewgroup
+        ViewGroup viewGroup = findViewById(android.R.id.content);
+
+        //then we will inflate the custom alert dialog xml that we created
+        final View dialogView = LayoutInflater.from(this).inflate(R.layout.vibe_rater, viewGroup, false);
+
+        final AMeter vibeRater=  dialogView.findViewById(R.id.vibe_rater_gauge);
+
+        SeekBar seekRater = dialogView.findViewById(R.id.vibe_rater_seekbar);
+
+        Button submitRating = dialogView.findViewById(R.id.vibe_rater_btnSubmitRating);
+
+        seekRater.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                vibeRater.setValue((float) progress);
+
+                rating = progress;
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        //setting the view of the builder to our custom view that we already inflated
+        builder.setView(dialogView);
+
+        //finally creating the alert dialog and displaying it
+        final AlertDialog alertDialog = builder.create();
+
+        submitRating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                submitRating();
+
+                alertDialog.dismiss();
+
+            }
+        });
+
+        alertDialog.setCanceledOnTouchOutside(false);
+
+        alertDialog.show();
+    }
+
+    private void submitRating() {
+
+        vibeRate = vibeRate + rating;
+
+        FirebaseFirestore eventsRef = FirebaseFirestore.getInstance();
+
+        eventsRef.collection("events")
+                .document(eventId)
+                .update("rating",vibeRate);
+
+
     }
 }

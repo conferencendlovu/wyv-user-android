@@ -52,6 +52,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1062004872466-grleaip28bhj65a1oil4hg5kn7cilk3s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "za.co.whatsyourvibe.user",
+            "certificate_hash": "c3c037ac363bbfc875ee17ea4a499c0b1a8b271f"
+          }
+        },
+        {
           "client_id": "1062004872466-208ia0plejp781g4ckps1pua63qqk7g9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

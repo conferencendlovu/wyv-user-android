@@ -161,11 +161,12 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
                     }
                 }
 
-                //map.setMyLocationEnabled(true);
+                map.setMyLocationEnabled(true);
 
                 getMyLocation();
 
                 getEvents();
+
 
             }
         } catch (Resources.NotFoundException e) {
@@ -208,6 +209,7 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
                                         .position(vibe)
                                         .icon(icon)
                                         .title(title));
+
                             }
 
                         }
@@ -230,7 +232,7 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
     public void onLocationChanged(Location location) {
         mLastKnownLocation = location;
 
-        mMap.clear();
+       // mMap.clear();
 
         if (mLastKnownLocation !=null) {
 
@@ -247,15 +249,15 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
             markerOptions.position(latLng);
 
             markerOptions.title("You Are Here");
-            
+
             markerOptions.icon(icon);
-            
-            mMap.addMarker(markerOptions);
 
-            getEvents();
+           // mMap.addMarker(markerOptions);
 
-            float zoomLevel = 16.0f; //This goes up to 21
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+           // getEvents();
+
+          //  float zoomLevel = 16.0f; //This goes up to 21
+          //  mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
         }
     }
 
@@ -316,6 +318,9 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
                                         mLastKnownLocation = LocationServices.FusedLocationApi
                                                 .getLastLocation(googleApiClient);
 
+                                        LatLng latLng = new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude());
+                                        float zoomLevel = 13.0f; //This goes up to 21
+                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
 
                                     }
                                     break;

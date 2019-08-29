@@ -54,7 +54,7 @@
                 android:textSize="28sp"
                 android:text="@string/default_event_title"
                 android:layout_margin="10dp"
-                fontPath="fonts/alternative.ttf"
+                fontPath="fonts/heading.ttf"
                 android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
 
                         <Button
                             android:id="@+id/event_details_btnRateVibe"
-                            android:drawableTop="@drawable/icon_rate_vibe"
+                            android:drawableTop="@drawable/icon_flame"
                             android:drawablePadding="10dp"
                             style="?android:attr/buttonBarButtonStyle"
                             android:text="Rate Vibe"

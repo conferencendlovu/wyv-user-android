@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 28
@@ -35,6 +36,7 @@ dependencies {
     implementation 'io.github.inflationx:viewpump:1.0.0'
     implementation 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
     implementation 'pl.pawelkleczkowski.customgauge:CustomGauge:1.0.4'
+    implementation 'com.app.infideap.stylishwidget:stylish-widget:1.4.2-alpha'
 
     implementation 'androidx.multidex:multidex:2.0.1'
 
@@ -44,6 +46,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:20.1.0'
     implementation 'com.google.firebase:firebase-storage:18.1.0'
     implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
+    implementation 'com.google.firebase:firebase-analytics:17.1.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     // google apis
     implementation 'com.google.android.gms:play-services-location:17.0.0'

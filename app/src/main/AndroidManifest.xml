@@ -20,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activities.VibeRaterActivity"></activity>
         <activity android:name=".SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,7 +29,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".AuthenticationActivity" />
-
         <activity android:name=".activities.ProfileActivity" />
 
         <meta-data

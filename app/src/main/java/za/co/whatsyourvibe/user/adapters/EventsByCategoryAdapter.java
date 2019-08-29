@@ -47,9 +47,9 @@ public class EventsByCategoryAdapter extends RecyclerView.Adapter<EventsByCatego
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, final int position) {
 
         Glide.with(context)
-                .load(eventList.get(position).getPoster())
-               // .placeholder(placeholder)
-               // .fitCenter()
+                .load(eventList.get(position).getImage1())
+                .placeholder(R.drawable.spinner)
+                .centerCrop()
                 .into(myViewHolder.cover);
 
         myViewHolder.title.setText(eventList.get(position).getName());
