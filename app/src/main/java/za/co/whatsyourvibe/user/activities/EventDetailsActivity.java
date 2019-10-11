@@ -312,8 +312,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private void rateVibe() {
 
-        showVibeRater();
-
         Location.distanceBetween(
                 lat,
                 lng,
@@ -337,32 +335,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         }else{
 
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-            iGoing = iGoing + 1;
-
-            db.collection("events")
-                    .document(eventId)
-                    .update("rate", iGoing)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-
-                            rate.setText(iGoing +"");
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-
-                    Toast.makeText(EventDetailsActivity.this, "An error occurred, please try again", Toast.LENGTH_SHORT).show();
-
-                    iGoing = iGoing - 1;
-
-                    rate.setText(iGoing +"");
-
-                }
-            });
+            showVibeRater();
 
         }
 

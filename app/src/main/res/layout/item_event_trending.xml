@@ -32,7 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="255dp"
-        fontPath="fonts/bold.ttf"
         android:layout_marginStart="120dp"
         android:text="@string/default_event_title"
         android:textSize="18sp"

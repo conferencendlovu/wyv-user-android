@@ -252,12 +252,12 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
 
             markerOptions.icon(icon);
 
-           // mMap.addMarker(markerOptions);
+            mMap.addMarker(markerOptions);
 
-           // getEvents();
+            getEvents();
 
-          //  float zoomLevel = 16.0f; //This goes up to 21
-          //  mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+            float zoomLevel = 16.0f; //This goes up to 21
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
         }
     }
 

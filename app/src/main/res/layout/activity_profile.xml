@@ -71,7 +71,7 @@
                     android:paddingTop="10dp"
                     app:gaugePointStartColor="@color/color_gradient_start"
                     app:gaugePointEndColor="@color/color_gradient_end"
-                    app:gaugePointSize="200"
+                    app:gaugePointSize="0"
                     app:gaugeStartAngle="135"
                     app:gaugeStrokeCap="ROUND"
                     app:gaugeStrokeColor="#fff"
@@ -81,11 +81,11 @@
                     app:gaugeSweepAngle="270" />
 
                 <TextView
+                    android:id="@+id/profile_tvPoints"
                     android:gravity="center_horizontal"
                     android:textColor="@color/colorPrimary"
                     android:textSize="52sp"
-                    android:text="190"
-                    fontPath="fonts/bold.ttf"
+                    android:text="0"
                     android:layout_centerInParent="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -96,7 +96,6 @@
                 android:layout_marginTop="5dp"
                 android:gravity="center_horizontal"
                 android:textColor="#fff"
-                fontPath="fonts/bold.ttf"
                 android:textSize="26sp"
                 android:text="VIBES RATED"
                 android:layout_width="match_parent"
@@ -128,7 +127,6 @@
                 android:layout_marginTop="20dp"
                 android:textColor="@color/color_text_secondary"
                 android:textSize="58sp"
-                fontPath="fonts/bold.ttf"
                 android:text="0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

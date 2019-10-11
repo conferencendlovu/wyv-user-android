@@ -54,7 +54,6 @@
                 android:textSize="28sp"
                 android:text="@string/default_event_title"
                 android:layout_margin="10dp"
-                fontPath="fonts/heading.ttf"
                 android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

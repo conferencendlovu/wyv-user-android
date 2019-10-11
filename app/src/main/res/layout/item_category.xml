@@ -22,7 +22,6 @@
         android:text="@string/concerts"
         android:background="#99000000"
         android:textAllCaps="true"
-        fontPath="fonts/bold.ttf"
         android:textSize="28sp"
         android:layout_gravity="center"
         android:gravity="center"

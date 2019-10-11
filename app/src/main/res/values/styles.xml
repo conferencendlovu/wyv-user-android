@@ -21,12 +21,12 @@
 
     <style name="myToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="colorControlNormal">@color/color_primary_font</item>
-        <item name="android:fontFamily">@asset/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
         <item name="android:textColor">@color/color_primary_font</item>
     </style>
 
     <style name="tab_text" parent="TextAppearance.Design.Tab">
-        <item name="android:fontFamily">@assets/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
