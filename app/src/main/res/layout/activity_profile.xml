@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content">
 
                 <pl.pawelkleczkowski.customgauge.CustomGauge
-                    android:id="@+id/gauge1"
+                    android:id="@+id/profile_vibesPointsGauge"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_centerHorizontal="true"
@@ -71,7 +71,6 @@
                     android:paddingTop="10dp"
                     app:gaugePointStartColor="@color/color_gradient_start"
                     app:gaugePointEndColor="@color/color_gradient_end"
-                    app:gaugePointSize="0"
                     app:gaugeStartAngle="135"
                     app:gaugeStrokeCap="ROUND"
                     app:gaugeStrokeColor="#fff"
@@ -97,7 +96,7 @@
                 android:gravity="center_horizontal"
                 android:textColor="#fff"
                 android:textSize="26sp"
-                android:text="VIBES RATED"
+                android:text="VIBES POINTS"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 tools:ignore="MissingPrefix" />

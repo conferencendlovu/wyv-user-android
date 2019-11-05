@@ -14,6 +14,14 @@ public class User implements Serializable {
 
     private int points;
 
+    private String age;
+
+    private String gender;
+
+    private String province;
+
+    private String town;
+
     private int rated;
 
     public String getDisplayName() {
@@ -62,5 +70,37 @@ public class User implements Serializable {
 
     public void setRated(int rated) {
         this.rated = rated;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getTown() {
+        return town;
+    }
+
+    public void setTown(String town) {
+        this.town = town;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }

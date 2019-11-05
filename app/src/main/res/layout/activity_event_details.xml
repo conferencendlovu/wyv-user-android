@@ -218,8 +218,9 @@
                     <TextView
                         android:id="@+id/event_details_tvEarlyBirdFee"
                         android:drawableStart="@drawable/icon_ticket"
-                        android:textSize="30sp"
-                        android:drawablePadding="10dp"
+                        android:textSize="15sp"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -241,8 +242,9 @@
                     <TextView
                         android:id="@+id/event_details_tvStandardFee"
                         android:drawableStart="@drawable/icon_ticket"
-                        android:textSize="30sp"
-                        android:drawablePadding="10dp"
+                        android:textSize="15sp"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -265,8 +267,9 @@
                     <TextView
                         android:id="@+id/event_details_tvVIPFee"
                         android:drawableStart="@drawable/icon_ticket"
-                        android:textSize="30sp"
-                        android:drawablePadding="10dp"
+                        android:textSize="15sp"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
@@ -288,8 +291,9 @@
                     <TextView
                         android:id="@+id/event_details_tvGroupFee"
                         android:drawableStart="@drawable/icon_ticket"
-                        android:textSize="30sp"
-                        android:drawablePadding="10dp"
+                        android:textSize="15sp"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
                         android:layout_gravity="center_horizontal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />

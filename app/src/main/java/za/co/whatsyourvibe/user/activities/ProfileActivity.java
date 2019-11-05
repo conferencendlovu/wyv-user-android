@@ -41,7 +41,9 @@ import com.google.firebase.storage.UploadTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.inflationx.viewpump.ViewPumpContextWrapper;
+import pl.pawelkleczkowski.customgauge.CustomGauge;
 import za.co.whatsyourvibe.user.R;
+import za.co.whatsyourvibe.user.models.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -61,7 +63,9 @@ public class ProfileActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
 
-    private TextView tvDisplayName, tvVibesRated;
+    private CustomGauge vibePointsGauge;
+
+    private TextView tvDisplayName, tvVibesRated, tvVibePoints;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -156,6 +160,20 @@ public class ProfileActivity extends AppCompatActivity {
 
                         if (documentSnapshot.exists()) {
 
+                            User user = documentSnapshot.toObject(User.class);
+
+                            int gaugePoints = user.getPoints() + 175;
+
+                            tvDisplayName.setText(user.getDisplayName());
+
+                            tvVibePoints.setText(user.getPoints()+"");
+
+                            //vibePointsGauge.setPointSize(gaugePoints);
+
+                            vibePointsGauge.setValue(user.getPoints());
+
+                            //vibePointsGauge.setEndValue(270);
+
                             if (documentSnapshot.get("photoUrl") !=null) {
 
                                 Glide.with(getApplicationContext())
@@ -164,9 +182,6 @@ public class ProfileActivity extends AppCompatActivity {
                                         // .fitCenter()
                                         .into(profileImage);
 
-                            }else{
-
-                                showUpdateProfileDialog(currentUserId);
 
                             }
                         }else {
@@ -174,13 +189,6 @@ public class ProfileActivity extends AppCompatActivity {
                             showUpdateProfileDialog(currentUserId);
                         }
 
-                        if (documentSnapshot.get("displayName") !=null) {
-
-                            tvDisplayName.setText(documentSnapshot.get("displayName").toString());
-                        }else{
-                            Toast.makeText(ProfileActivity.this, "Display Not Set", Toast.LENGTH_SHORT).show();
-                            tvDisplayName.setText("Guest");
-                        }
 
                     }
                 });
@@ -276,7 +284,23 @@ public class ProfileActivity extends AppCompatActivity {
                     return;
                 }
 
-                
+                User user = new User();
+
+                user.setDisplayName(displayName.getText().toString());
+
+                user.setEmailAddress(emailAddress.getText().toString());
+
+                user.setAge(age.getText().toString());
+
+                user.setProvince(province.getSelectedItem().toString());
+
+                user.setTown(city.getText().toString());
+
+                user.setGender(gender.getSelectedItem().toString());
+
+                user.setRated(Integer.parseInt(tvVibesRated.getText().toString()));
+
+                updateFirebaseProfile(user,alertDialog);
 
             }
         });
@@ -287,6 +311,39 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    private void updateFirebaseProfile(User user, final AlertDialog alertDialog) {
+
+        FirebaseFirestore updateUserRef = FirebaseFirestore.getInstance();
+
+        updateUserRef.collection("vibers")
+                .document(currentUserId)
+                .set(user)
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        alertDialog.dismiss();
+
+                        Toast.makeText(ProfileActivity.this, e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
+
+                    }
+                })
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        alertDialog.dismiss();
+
+                        Toast.makeText(ProfileActivity.this, "Profile updated successfully",
+                                Toast.LENGTH_SHORT).show();
+
+                        loadProfileDetails(currentUserId);
+                    }
+                });
+
+    }
+
     private void initViews() {
 
         profileImage = findViewById(R.id.profile_ivPhoto);
@@ -294,6 +351,10 @@ public class ProfileActivity extends AppCompatActivity {
         tvDisplayName = findViewById(R.id.profile_displayName);
 
         tvVibesRated = findViewById(R.id.profile_tvVibesRated);
+
+        tvVibePoints = findViewById(R.id.profile_tvPoints);
+
+        vibePointsGauge = findViewById(R.id.profile_vibesPointsGauge);
 
         setListeners();
     }
@@ -432,7 +493,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void updateUserProfile() {
 
-        db.collection("users")
+        db.collection("vibers")
                 .document(currentUserId)
                 .update("photoUrl",imageUrl);
     }

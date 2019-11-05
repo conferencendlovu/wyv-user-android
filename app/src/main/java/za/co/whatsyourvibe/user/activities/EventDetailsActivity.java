@@ -54,6 +54,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.viewpagerindicator.CirclePageIndicator;
 
@@ -65,6 +66,7 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper;
 import za.co.whatsyourvibe.user.R;
 import za.co.whatsyourvibe.user.adapters.SlidingImageAdapter;
 import za.co.whatsyourvibe.user.models.Event;
+import za.co.whatsyourvibe.user.models.User;
 
 public class EventDetailsActivity extends AppCompatActivity implements OnMapReadyCallback,
         LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
@@ -104,6 +106,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
     private int rating;
 
     private int vibeRate;
+
+    private int vibePointsBalance = 0;
 
     private TextView mTitle;
 
@@ -155,6 +159,11 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         loadData();
 
+        if (mAuth.getCurrentUser() !=null) {
+
+            getCurrentUserEventsActivity(mAuth.getCurrentUser().getUid());
+        }
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.event_details_map);
         mapFragment.getMapAsync(this);
@@ -163,10 +172,41 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     }
 
+    private void getCurrentUserEventsActivity(String uid) {
+
+        FirebaseFirestore userActivityRef = FirebaseFirestore.getInstance();
+
+        userActivityRef.collection("vibers")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        if (documentSnapshot.exists()) {
+
+                            User user = documentSnapshot.toObject(User.class);
+
+                            vibePointsBalance = user.getPoints();
+
+                        }
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Toast.makeText(EventDetailsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+    }
+
     private void loadData() {
 
         event = (Event) getIntent().getSerializableExtra("EVENT");
-
 
 
         if (event !=null) {
@@ -645,13 +685,27 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
             HashMap<String, Object> eventRating = new HashMap<>();
 
-            eventRating.put("rating", rating);
+            double newRate = (rating + event.getRating())/ 2;
+
+            eventRating.put("rating", newRate);
+
+            rate.setText(newRate+"%");
 
             eventsRef.collection("events_raters")
                     .document(mAuth.getCurrentUser().getUid())
                     .collection("my_ratings")
                     .document(eventId)
                     .set(eventRating);
+
+
+            // update user rating points
+            vibePointsBalance = vibePointsBalance + 5;
+
+            FirebaseFirestore updateUserPoints = FirebaseFirestore.getInstance();
+
+            updateUserPoints.collection("vibers")
+                    .document(mAuth.getCurrentUser().getUid())
+                    .update("points",vibePointsBalance);
 
         }
 
