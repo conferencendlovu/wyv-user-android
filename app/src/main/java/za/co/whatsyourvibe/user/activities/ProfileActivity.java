@@ -2,6 +2,7 @@ package za.co.whatsyourvibe.user.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -12,16 +13,28 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.infideap.stylishwidget.view.AMeter;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.dynamic.IFragmentWrapper;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -48,7 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
 
-    private TextView tvDisplayName;
+    private TextView tvDisplayName, tvVibesRated;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -74,6 +87,8 @@ public class ProfileActivity extends AppCompatActivity {
             currentUserId = auth.getUid();
 
             loadProfileDetails(currentUserId);
+
+            getUserPoints(currentUserId);
         }
 
         Toolbar toolbar = findViewById(R.id.profile_toolbar);
@@ -103,9 +118,36 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    private void loadProfileDetails(String currentUserId) {
+    private void getUserPoints(String currentUserId) {
 
-        db.collection("users")
+        db.collection("events_raters")
+                .document(currentUserId)
+                .collection("my_ratings")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                        if (!queryDocumentSnapshots.isEmpty()) {
+
+                            tvVibesRated.setText(queryDocumentSnapshots.size()+"");
+
+                        }
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+
+    }
+
+    private void loadProfileDetails(final String currentUserId) {
+
+        db.collection("vibers")
                 .document(currentUserId)
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -124,8 +166,12 @@ public class ProfileActivity extends AppCompatActivity {
 
                             }else{
 
-                                Toast.makeText(ProfileActivity.this, "Profile Photo Not Available, please set", Toast.LENGTH_SHORT).show();
+                                showUpdateProfileDialog(currentUserId);
+
                             }
+                        }else {
+
+                            showUpdateProfileDialog(currentUserId);
                         }
 
                         if (documentSnapshot.get("displayName") !=null) {
@@ -141,11 +187,113 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    private void showUpdateProfileDialog(String currentUserId) {
+
+        //before inflating the custom alert dialog layout, we will get the current activity viewgroup
+        ViewGroup viewGroup = findViewById(android.R.id.content);
+
+        //then we will inflate the custom alert dialog xml that we created
+        final View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_update_profile, viewGroup, false);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        final EditText displayName = dialogView.findViewById(R.id.dialog_update_profile_etDisplayName);
+
+        final EditText emailAddress =
+                dialogView.findViewById(R.id.dialog_update_profile_etEmailAddress);
+
+        final EditText age = dialogView.findViewById(R.id.dialog_update_profile_etAge);
+
+        final Spinner gender = dialogView.findViewById(R.id.dialog_update_profile_spnGender);
+
+        final EditText city = dialogView.findViewById(R.id.dialog_update_profile_etCity);
+
+        final Spinner province = dialogView.findViewById(R.id.dialog_update_profile_spnProvince);
+
+        Button updateProfile = dialogView.findViewById(R.id.dialog_update_profile_btnUpdateProfile);
+
+
+        //setting the view of the builder to our custom view that we already inflated
+        builder.setView(dialogView);
+
+        //finally creating the alert dialog and displaying it
+        final AlertDialog alertDialog = builder.create();
+
+        updateProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (TextUtils.isEmpty(displayName.getText())) {
+
+                    displayName.setError("Your name is required!");
+
+                    displayName.requestFocus();
+
+                    return;
+                }
+
+                if (TextUtils.isEmpty(emailAddress.getText())) {
+
+                    emailAddress.setError("Email address is required!");
+
+                    emailAddress.requestFocus();
+
+                    return;
+                }
+
+                if (TextUtils.isEmpty(age.getText())) {
+
+                    age.setError("Age is required!");
+
+                    age.requestFocus();
+
+                    return;
+                }
+
+
+                if (TextUtils.isEmpty(city.getText())) {
+
+                    city.setError("City is required!");
+
+                    city.requestFocus();
+
+                    return;
+                }
+
+                if (gender.getSelectedItemPosition() == 0) {
+
+                    Toast.makeText(ProfileActivity.this, "Please select your gender",
+                            Toast.LENGTH_SHORT).show();
+
+                    return;
+                }
+
+                if (province.getSelectedItemPosition() == 0) {
+
+                    Toast.makeText(ProfileActivity.this, "Please select your province",
+                            Toast.LENGTH_SHORT).show();
+
+                    return;
+                }
+
+                
+
+            }
+        });
+
+        alertDialog.setCanceledOnTouchOutside(false);
+
+        alertDialog.show();
+
+    }
+
     private void initViews() {
 
         profileImage = findViewById(R.id.profile_ivPhoto);
 
         tvDisplayName = findViewById(R.id.profile_displayName);
+
+        tvVibesRated = findViewById(R.id.profile_tvVibesRated);
 
         setListeners();
     }
