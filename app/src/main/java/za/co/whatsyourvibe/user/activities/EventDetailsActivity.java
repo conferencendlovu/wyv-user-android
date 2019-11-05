@@ -52,6 +52,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.viewpagerindicator.CirclePageIndicator;
@@ -96,6 +97,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private float distance[] = new float[1];
 
+    private FirebaseAuth mAuth;
+
     private Event event;
 
     private int rating;
@@ -122,6 +125,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
 
         setContentView(R.layout.activity_event_details);
 
@@ -161,6 +166,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
     private void loadData() {
 
         event = (Event) getIntent().getSerializableExtra("EVENT");
+
+
 
         if (event !=null) {
 
@@ -203,6 +210,12 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
             lng  = (float) event.getLongitude();
 
             initSlider();
+        } else {
+
+            // get details from the EVENT_ID extra
+            String eventId = getIntent().getStringExtra("EVENT_ID");
+
+            // run operation to query the database and get details
         }
 
 
@@ -319,6 +332,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                 myLng,
                 distance);
 
+        showVibeRater();
+
         if ((int) distance[0]> 100) {
 
             // setup the alert builder
@@ -420,7 +435,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         going = findViewById(R.id.event_details_tvGoing);
 
-        fee = findViewById(R.id.event_details_tvFee);
+         fee = findViewById(R.id.event_details_tvEarlyBirdFee);
 
        // coverImage = findViewById(R.id.event_details_coverImage);
 
@@ -594,6 +609,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+
             }
         });
 
@@ -623,14 +639,21 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private void submitRating() {
 
-        vibeRate = vibeRate + rating;
-
         FirebaseFirestore eventsRef = FirebaseFirestore.getInstance();
 
-        eventsRef.collection("events")
-                .document(eventId)
-                .update("rating",vibeRate);
+        if (mAuth.getCurrentUser() !=null) {
 
+            HashMap<String, Object> eventRating = new HashMap<>();
+
+            eventRating.put("rating", rating);
+
+            eventsRef.collection("events_raters")
+                    .document(mAuth.getCurrentUser().getUid())
+                    .collection("my_ratings")
+                    .document(eventId)
+                    .set(eventRating);
+
+        }
 
     }
 }

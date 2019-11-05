@@ -7,12 +7,12 @@
     app:cardCornerRadius="10dp"
     app:cardElevation="5dp"
     android:layout_width="match_parent"
-    android:layout_height="180dp">
+    android:layout_height="220dp">
 
     <ImageView
         android:id="@+id/item_event_coverImage"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="150dp"
         android:scaleType="fitXY"
         android:src="@drawable/theater" />
 
@@ -22,7 +22,7 @@
         android:textSize="20sp"
         android:text="@string/default_event_title"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="160dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -33,7 +33,7 @@
         android:drawableStart="@drawable/icon_calender"
         android:drawablePadding="10dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="190dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -44,7 +44,7 @@
         android:drawableStart="@drawable/icon_time"
         android:drawablePadding="10dp"
         android:layout_marginStart="300dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="160dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

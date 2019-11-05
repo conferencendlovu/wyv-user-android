@@ -148,6 +148,13 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
                     MapStyleOptions.loadRawResourceStyle(
                             getContext(), R.raw.map_primary_style));
 
+            getEvents();
+
+            float zoomLevel = 12.0f; //This goes up to 21
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-25.842858,28.119745),
+                    zoomLevel));
+
             if (!success) {
                 Log.e(TAG, "Style parsing failed.");
             }else{
@@ -203,11 +210,14 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
 
                                 String title = (String) doc.get("name");
 
+                                String eventId = doc.getId();
+
                                 LatLng vibe = new LatLng(lat, lng);
 
                                 mMap.addMarker(new MarkerOptions()
                                         .position(vibe)
                                         .icon(icon)
+                                        .snippet(eventId)
                                         .title(title));
 
                             }
@@ -224,6 +234,8 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
     public void onInfoWindowClick(Marker marker) {
 
        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+
+       intent.putExtra("EVENT_ID", marker.getSnippet());
 
        startActivity(intent);
     }
