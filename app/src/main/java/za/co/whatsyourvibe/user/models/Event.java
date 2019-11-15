@@ -48,6 +48,20 @@ public class Event implements Serializable {
 
     private String group;
 
+    private int going;
+
+    private double rate;
+
+    private String facebook;
+
+    private String instagram;
+
+    private  String twitter;
+
+    private String email;
+
+    private String telephone;
+
     private String coverPhotoUrl;
 
     public Event() {
@@ -235,5 +249,61 @@ public class Event implements Serializable {
 
     public void setLng(float lng) {
         this.lng = lng;
+    }
+
+    public String getFacebook() {
+        return facebook;
+    }
+
+    public void setFacebook(String facebook) {
+        this.facebook = facebook;
+    }
+
+    public String getInstagram() {
+        return instagram;
+    }
+
+    public void setInstagram(String instagram) {
+        this.instagram = instagram;
+    }
+
+    public String getTwitter() {
+        return twitter;
+    }
+
+    public void setTwitter(String twitter) {
+        this.twitter = twitter;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public int getGoing() {
+        return going;
+    }
+
+    public void setGoing(int going) {
+        this.going = going;
+    }
+
+    public double getRate() {
+        return rate;
+    }
+
+    public void setRate(double rate) {
+        this.rate = rate;
     }
 }

@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -81,7 +82,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private TextView title, overview, date, time;
 
-    private TextView share, going, rate, fee;
+    private TextView share, going, rate, tvEarlyBird, tvStandard, tvVip, tvGroup,tvVideoLabel;
 
     private ImageView coverImage;
 
@@ -122,6 +123,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
     private static int NUM_PAGES = 0;
 
     private ArrayList<String> urls;
+
+    private ImageView btnVideo, btnFacebook, btnInstagram, btnTwitter, btnEmail, btnCall;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -260,7 +263,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
             time.setText(event.getTime());
 
-            iGoing = event.getCheckins();
+            iGoing = event.getGoing();
 
             // iShares = event.getShares();
 
@@ -274,19 +277,155 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
             rate.setText(event.getRating()+"");
 
-            fee.setText("R " + event.getEarlyBird());
+            tvEarlyBird.setText("R " + event.getEarlyBird());
 
-//            Glide.with(this)
-//                    .load(event.getPoster())
-//                    // .placeholder(placeholder)
-//                    // .fitCenter()
-//                    .into(coverImage);
+            tvStandard.setText("R " + event.getStandard());
+
+            tvVip.setText("R " + event.getVip());
+
+            tvGroup.setText("R " + event.getGroup());
+
 
             mTitle.setText(event.getTitle());
 
             lat = event.getLat();
 
             lng  = event.getLng();
+
+            if (event.getVideoUrl() != null) {
+
+                btnVideo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse(event.getVideoUrl()));
+
+                        startActivity(webIntent);
+
+                    }
+                });
+
+                btnVideo.setVisibility(View.VISIBLE);
+
+                tvVideoLabel.setVisibility(View.VISIBLE);
+
+            }else{
+
+                btnVideo.setVisibility(View.GONE);
+
+                tvVideoLabel.setVisibility(View.GONE);
+
+            }
+
+            if(event.getFacebook() !=null) {
+
+                btnFacebook.setVisibility(View.VISIBLE);
+
+                btnFacebook.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://www.facebook.com/" + event.getFacebook()));
+
+                        startActivity(webIntent);
+
+                    }
+                });
+
+            }else {
+
+                btnFacebook.setVisibility(View.GONE);
+            }
+
+            if(event.getTwitter() !=null) {
+
+                btnTwitter.setVisibility(View.VISIBLE);
+
+                btnTwitter.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://twitter.com/" + event.getTwitter()));
+
+                        startActivity(webIntent);
+
+                    }
+                });
+
+            }else {
+
+                btnTwitter.setVisibility(View.GONE);
+            }
+
+
+
+            if(event.getInstagram() !=null) {
+
+                btnInstagram.setVisibility(View.VISIBLE);
+
+                btnInstagram.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("https://www.instagram.com/" + event.getInstagram()));
+
+                        startActivity(webIntent);
+
+                    }
+                });
+
+            }else {
+
+                btnInstagram.setVisibility(View.GONE);
+            }
+
+            if (event.getEmail() !=null) {
+
+                btnEmail.setVisibility(View.VISIBLE);
+
+                btnEmail.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent intent = new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("mailto:"+ event.getEmail().trim()));
+                        intent.putExtra(Intent.EXTRA_SUBJECT, "Enquiry about " + event.getTitle());
+                        intent.putExtra(Intent.EXTRA_TEXT, "Good day...");
+                        startActivity(intent);
+
+                    }
+                });
+
+
+            }else{
+
+                btnEmail.setVisibility(View.GONE);
+            }
+
+            if (event.getTelephone() !=null) {
+
+                btnCall.setVisibility(View.VISIBLE);
+
+                btnCall.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:" + event.getTelephone()));
+                        startActivity(intent);
+                    }
+                });
+
+            }else{
+
+                btnCall.setVisibility(View.GONE);
+            }
+
+
 
 
         } else {
@@ -363,6 +502,9 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
             public void onClick(View v) {
 
                 checkIn();
+
+                Toast.makeText(EventDetailsActivity.this, "Working", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -443,7 +585,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         userCheckins.collection("viber_checkins")
                 .document(mAuth.getCurrentUser().getUid())
                 .collection("my_checkins")
-                .document(eventId)
+                .document(event.getId())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -460,13 +602,12 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
                             if (mAuth.getCurrentUser() !=null) {
 
-                                int totalCheckin = event.getCheckins();
+                                int totalCheckin = event.getGoing();
 
-                                totalCheckin++;
-
+                                totalCheckin = totalCheckin + 1;
 
                                 eventsRef.collection("vibes")
-                                        .document(eventId)
+                                        .document(event.getId())
                                         .update("going",totalCheckin);
 
 
@@ -480,11 +621,15 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                                         .update("points",vibePointsBalance);
 
 
+                                HashMap<String, Object> userChecking = new HashMap<>();
+
+                                userChecking.put("checkin",mAuth.getCurrentUser().getUid());
+
                                 userCheckins.collection("viber_checkins")
                                         .document(mAuth.getCurrentUser().getUid())
                                         .collection("my_checkins")
-                                        .document(eventId)
-                                        .update("checkin",mAuth.getCurrentUser().getUid());
+                                        .document(event.getId())
+                                        .set(userChecking);
                             }
 
                         }
@@ -529,6 +674,18 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private void initViews() {
 
+        btnEmail = findViewById(R.id.event_details_email);
+
+        btnCall = findViewById(R.id.event_details_telephone);
+
+        btnFacebook = findViewById(R.id.event_details_facebook);
+
+        btnInstagram = findViewById(R.id.event_details_instagram);
+
+        btnTwitter = findViewById(R.id.event_details_twitter);
+
+        btnVideo = findViewById(R.id.event_details_video);
+
         btnCheckIn = findViewById(R.id.event_details_btnCheckIn);
 
         btnShareVibe = findViewById(R.id.event_details_btnShareVibe);
@@ -549,7 +706,15 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         going = findViewById(R.id.event_details_tvGoing);
 
-         fee = findViewById(R.id.event_details_tvEarlyBirdFee);
+        tvEarlyBird = findViewById(R.id.event_details_tvEarlyBirdFee);
+
+        tvStandard = findViewById(R.id.event_details_tvStandardFee);
+
+        tvVip = findViewById(R.id.event_details_tvVIPFee);
+
+        tvGroup = findViewById(R.id.event_details_tvGroupFee);
+
+        tvVideoLabel = findViewById(R.id.event_details_video_label);
 
        // coverImage = findViewById(R.id.event_details_coverImage);
 
@@ -780,6 +945,12 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
             updateUserPoints.collection("vibers")
                     .document(mAuth.getCurrentUser().getUid())
                     .update("points",vibePointsBalance);
+
+            FirebaseFirestore newEventRateRef = FirebaseFirestore.getInstance();
+
+            newEventRateRef.collection("vibes")
+                    .document(event.getId())
+                    .update("rating",newRate);
 
         }
 

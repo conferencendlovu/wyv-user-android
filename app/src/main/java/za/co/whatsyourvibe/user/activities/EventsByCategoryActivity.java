@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -57,7 +58,8 @@ public class EventsByCategoryActivity extends AppCompatActivity {
             }
         });
 
-        String category = getIntent().getStringExtra("CATEGORY").toUpperCase();
+        String category = getIntent().getStringExtra("CATEGORY").toUpperCase().trim();
+
 
         setSupportActionBar(toolbar);
 
@@ -83,7 +85,7 @@ public class EventsByCategoryActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("events")
+        db.collection("vibes")
                 .whereEqualTo("category", category)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
