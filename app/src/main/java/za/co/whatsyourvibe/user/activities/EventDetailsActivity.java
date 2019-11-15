@@ -56,9 +56,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.viewpagerindicator.CirclePageIndicator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -103,9 +107,9 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private Event event;
 
-    private int rating;
+    private double rating;
 
-    private int vibeRate;
+    private double vibeRate;
 
     private int vibePointsBalance = 0;
 
@@ -117,7 +121,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private static int NUM_PAGES = 0;
 
-    private String[] urls;
+    private ArrayList<String> urls;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -208,12 +212,47 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         event = (Event) getIntent().getSerializableExtra("EVENT");
 
+      urls = new ArrayList<>();
 
         if (event !=null) {
 
-            urls = new String[] {event.getImage1(),event.getImage2(),event.getImage3()};
+            // get event photos
+            FirebaseFirestore photoRef = FirebaseFirestore.getInstance();
 
-            title.setText(event.getName());
+            photoRef.collection("photos")
+                    .document(event.getId())
+                    .collection("vibePhotos")
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+
+                            if (queryDocumentSnapshots !=null && queryDocumentSnapshots.size()> 0) {
+
+                                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+
+                                    urls.add(doc.get("downloadLink").toString().trim());
+
+                                }
+
+                                initSlider();
+
+                            }
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+
+           // urls = new String[] {event.getCoverPhotoUrl(),event.getCoverPhotoUrl(),
+             //       event.getCoverPhotoUrl()};
+
+            title.setText(event.getTitle());
 
             overview.setText(event.getDescription());
 
@@ -221,9 +260,9 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
             time.setText(event.getTime());
 
-            iGoing = event.getGoing();
+            iGoing = event.getCheckins();
 
-            iShares = event.getShares();
+            // iShares = event.getShares();
 
             eventId = event.getId();
 
@@ -235,7 +274,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
             rate.setText(event.getRating()+"");
 
-            fee.setText("R " + event.getEventEntryFee());
+            fee.setText("R " + event.getEarlyBird());
 
 //            Glide.with(this)
 //                    .load(event.getPoster())
@@ -243,13 +282,13 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 //                    // .fitCenter()
 //                    .into(coverImage);
 
-            mTitle.setText(event.getName());
+            mTitle.setText(event.getTitle());
 
-            lat = (float) event.getLatitude();
+            lat = event.getLat();
 
-            lng  = (float) event.getLongitude();
+            lng  = event.getLng();
 
-            initSlider();
+
         } else {
 
             // get details from the EVENT_ID extra
@@ -275,7 +314,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         //Set circle indicator radius
         indicator.setRadius(5 * density);
 
-        NUM_PAGES = urls.length;
+        NUM_PAGES = urls.size();
 
         // Auto start of viewpager
         final Handler handler = new Handler();
@@ -374,29 +413,90 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         showVibeRater();
 
-        if ((int) distance[0]> 100) {
-
-            // setup the alert builder
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Rate Vibe");
-            builder.setMessage("You are not at the event, you are not allowed to rate");
-
-            // add a button
-            builder.setPositiveButton("DISMISS", null);
-
-            // create and show the alert dialog
-            AlertDialog dialog = builder.create();
-            dialog.show();
-
-        }else{
-
-            showVibeRater();
-
-        }
+//        if ((int) distance[0]> 100) {
+//
+//            // setup the alert builder
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("Rate Vibe");
+//            builder.setMessage("You are not at the event, you are not allowed to rate");
+//
+//            // add a button
+//            builder.setPositiveButton("DISMISS", null);
+//
+//            // create and show the alert dialog
+//            AlertDialog dialog = builder.create();
+//            dialog.show();
+//
+//        }else{
+//
+//            showVibeRater();
+//
+//        }
 
     }
 
     private void checkIn() {
+
+        // check if user has not check_in before
+        final FirebaseFirestore userCheckins = FirebaseFirestore.getInstance();
+
+        userCheckins.collection("viber_checkins")
+                .document(mAuth.getCurrentUser().getUid())
+                .collection("my_checkins")
+                .document(eventId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+
+                            Toast.makeText(EventDetailsActivity.this, "You have already check-in",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }else{
+
+
+                            FirebaseFirestore eventsRef = FirebaseFirestore.getInstance();
+
+                            if (mAuth.getCurrentUser() !=null) {
+
+                                int totalCheckin = event.getCheckins();
+
+                                totalCheckin++;
+
+
+                                eventsRef.collection("vibes")
+                                        .document(eventId)
+                                        .update("going",totalCheckin);
+
+
+                                // update user rating points
+                                vibePointsBalance = vibePointsBalance + 10;
+
+                                FirebaseFirestore updateUserPoints = FirebaseFirestore.getInstance();
+
+                                updateUserPoints.collection("vibers")
+                                        .document(mAuth.getCurrentUser().getUid())
+                                        .update("points",vibePointsBalance);
+
+
+                                userCheckins.collection("viber_checkins")
+                                        .document(mAuth.getCurrentUser().getUid())
+                                        .collection("my_checkins")
+                                        .document(eventId)
+                                        .update("checkin",mAuth.getCurrentUser().getUid());
+                            }
+
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Toast.makeText(EventDetailsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         Location.distanceBetween(
                 lat,
@@ -405,50 +505,24 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                 myLng,
                 distance);
 
-        if ((int) distance[0]> 100) {
+//        if ((int) distance[0]> 100) {
+//
+//            // setup the alert builder
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle("Check In");
+//            builder.setMessage("You are not at the event, you are not allowed to check in");
+//
+//            // add a button
+//            builder.setPositiveButton("DISMISS", null);
+//
+//            // create and show the alert dialog
+//            AlertDialog dialog = builder.create();
+//            dialog.show();
+//
+//        }else{
 
-            // setup the alert builder
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Check In");
-            builder.setMessage("You are not at the event, you are not allowed to check in");
 
-            // add a button
-            builder.setPositiveButton("DISMISS", null);
-
-            // create and show the alert dialog
-            AlertDialog dialog = builder.create();
-            dialog.show();
-
-        }else{
-
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-            iGoing = iGoing + 1;
-
-            db.collection("events")
-                    .document(eventId)
-                    .update("going", iGoing)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-
-                            going.setText(iGoing +"");
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-
-                    Toast.makeText(EventDetailsActivity.this, "An error occurred, please try again", Toast.LENGTH_SHORT).show();
-
-                    iGoing = iGoing - 1;
-
-                    going.setText(iGoing +"");
-
-                }
-            });
-
-        }
+       // }
 
 
     }

@@ -5,25 +5,50 @@ import java.io.Serializable;
 public class Event implements Serializable {
 
     private String id;
-    private String organiserId;
-    private String categoryId;
-    private String name;
-    private String image1;
-    private String image2;
-    private String image3;
-    private String eventLocation;
-    private double latitude;
-    private double longitude;
-    private String poster;
+
+    private String title;
+
     private String description;
-    private double eventEntryFee;
-    private String responseMessage;
-    private String time;
+
+    private String location;
+
+    private float lat;
+
+    private float lng;
+
     private String date;
-    private int going;
-    private int shares;
-    private double rate;
-    private int rating;
+
+    private String time;
+
+    private String status;
+
+    private String type;
+
+    private String admission;
+
+    private String alcohol;
+
+    private String smoking;
+
+    private String age;
+
+    private int checkins;
+
+    private double rating;
+
+    private String category;
+
+    private String videoUrl;
+
+    private String earlyBird;
+
+    private String standard;
+
+    private String vip;
+
+    private String group;
+
+    private String coverPhotoUrl;
 
     public Event() {
     }
@@ -36,60 +61,12 @@ public class Event implements Serializable {
         this.id = id;
     }
 
-    public String getOrganiserId() {
-        return organiserId;
+    public String getTitle() {
+        return title;
     }
 
-    public void setOrganiserId(String organiserId) {
-        this.organiserId = organiserId;
-    }
-
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEventLocation() {
-        return eventLocation;
-    }
-
-    public void setEventLocation(String eventLocation) {
-        this.eventLocation = eventLocation;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getPoster() {
-        return poster;
-    }
-
-    public void setPoster(String poster) {
-        this.poster = poster;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getDescription() {
@@ -100,20 +77,12 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public double getEventEntryFee() {
-        return eventEntryFee;
+    public String getLocation() {
+        return location;
     }
 
-    public void setEventEntryFee(double eventEntryFee) {
-        this.eventEntryFee = eventEntryFee;
-    }
-
-    public String getResponseMessage() {
-        return responseMessage;
-    }
-
-    public void setResponseMessage(String responseMessage) {
-        this.responseMessage = responseMessage;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getDate() {
@@ -132,59 +101,139 @@ public class Event implements Serializable {
         this.time = time;
     }
 
-    public int getGoing() {
-        return going;
+    public String getStatus() {
+        return status;
     }
 
-    public void setGoing(int going) {
-        this.going = going;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public int getShares() {
-        return shares;
+    public String getType() {
+        return type;
     }
 
-    public void setShares(int shares) {
-        this.shares = shares;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public double getRate() {
-        return rate;
+    public String getAdmission() {
+        return admission;
     }
 
-    public void setRate(double rate) {
-        this.rate = rate;
+    public void setAdmission(String admission) {
+        this.admission = admission;
     }
 
-    public String getImage1() {
-        return image1;
+    public String getAlcohol() {
+        return alcohol;
     }
 
-    public void setImage1(String image1) {
-        this.image1 = image1;
+    public void setAlcohol(String alcohol) {
+        this.alcohol = alcohol;
     }
 
-    public String getImage2() {
-        return image2;
+    public String getSmoking() {
+        return smoking;
     }
 
-    public void setImage2(String image2) {
-        this.image2 = image2;
+    public void setSmoking(String smoking) {
+        this.smoking = smoking;
     }
 
-    public String getImage3() {
-        return image3;
+    public String getAge() {
+        return age;
     }
 
-    public void setImage3(String image3) {
-        this.image3 = image3;
+    public void setAge(String age) {
+        this.age = age;
     }
 
-    public int getRating() {
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
+    public String getEarlyBird() {
+        return earlyBird;
+    }
+
+    public void setEarlyBird(String earlyBird) {
+        this.earlyBird = earlyBird;
+    }
+
+    public String getStandard() {
+        return standard;
+    }
+
+    public void setStandard(String standard) {
+        this.standard = standard;
+    }
+
+    public String getVip() {
+        return vip;
+    }
+
+    public void setVip(String vip) {
+        this.vip = vip;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getCoverPhotoUrl() {
+        return coverPhotoUrl;
+    }
+
+    public void setCoverPhotoUrl(String coverPhotoUrl) {
+        this.coverPhotoUrl = coverPhotoUrl;
+    }
+
+    public int getCheckins() {
+        return checkins;
+    }
+
+    public void setCheckins(int checkins) {
+        this.checkins = checkins;
+    }
+
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public float getLat() {
+        return lat;
+    }
+
+    public void setLat(float lat) {
+        this.lat = lat;
+    }
+
+    public float getLng() {
+        return lng;
+    }
+
+    public void setLng(float lng) {
+        this.lng = lng;
     }
 }

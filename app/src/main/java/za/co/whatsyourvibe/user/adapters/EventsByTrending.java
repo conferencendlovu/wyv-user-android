@@ -48,22 +48,22 @@ public class EventsByTrending extends RecyclerView.Adapter<EventsByTrending.MyVi
     public void onBindViewHolder(@NonNull EventsByTrending.MyViewHolder myViewHolder, final int position) {
 
         Glide.with(context)
-                .load(eventList.get(position).getImage1())
+                .load(eventList.get(position).getCoverPhotoUrl())
                 // .placeholder(placeholder)
                 // .fitCenter()
                 .into(myViewHolder.photo);
 
         Glide.with(context)
-                .load(eventList.get(position).getImage2())
+                .load(eventList.get(position).getCoverPhotoUrl())
                 // .placeholder(placeholder)
                 // .fitCenter()
                 .into(myViewHolder.poster);
 
-        myViewHolder.title.setText(eventList.get(position).getName());
+        myViewHolder.title.setText(eventList.get(position).getTitle());
 
-        myViewHolder.going.setText(eventList.get(position).getGoing()+"");
+        myViewHolder.going.setText(eventList.get(position).getCheckins()+"");
 
-        myViewHolder.ratingBar.setRating((float)eventList.get(position).getRate());
+//        myViewHolder.ratingBar.setRating((float)eventList.get(position).getRate());
 
         myViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -11,16 +11,18 @@ import androidx.viewpager.widget.PagerAdapter;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+
 import za.co.whatsyourvibe.user.R;
 
 public class SlidingImageAdapter extends PagerAdapter {
 
-    private String[] urls;
+    private ArrayList<String> urls;
     private LayoutInflater inflater;
     private Context context;
 
 
-    public SlidingImageAdapter(Context context, String[] urls) {
+    public SlidingImageAdapter(Context context, ArrayList<String> urls) {
         this.context = context;
         this.urls = urls;
         inflater = LayoutInflater.from(context);
@@ -33,7 +35,7 @@ public class SlidingImageAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return urls.length;
+        return urls.size();
     }
 
     @Override
@@ -45,7 +47,7 @@ public class SlidingImageAdapter extends PagerAdapter {
 
 
         Glide.with(context)
-                .load(urls[position])
+                .load(urls.get(position))
                 .into(imageView);
 
         view.addView(imageLayout, 0);
