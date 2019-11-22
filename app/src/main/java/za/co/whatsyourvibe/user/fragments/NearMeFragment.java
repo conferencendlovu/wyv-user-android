@@ -1,6 +1,7 @@
 package za.co.whatsyourvibe.user.fragments;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -27,15 +28,20 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -50,6 +56,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.EventListener;
@@ -66,9 +73,10 @@ import za.co.whatsyourvibe.user.R;
 import za.co.whatsyourvibe.user.activities.EventDetailsActivity;
 import za.co.whatsyourvibe.user.adapters.CustomInfoWindowAdapter;
 
+import static android.app.Activity.RESULT_OK;
 
-public class NearMeFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener,
-        LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+public class NearMeFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     private GoogleMap mMap;
 
@@ -78,13 +86,12 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
 
     private Location mLastKnownLocation;
 
-    private GoogleApiClient googleApiClient;
+    private LocationCallback locationCallback;
+
 
     private double currentLat, currentLng;
 
     private final static int REQUEST_CHECK_GPS = 123;
-
-    private final static int REQUEST_ID_MULTIPLE_PERMISSION = 122;
 
 
     private BitmapDescriptor icon;
@@ -95,11 +102,25 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_near_me, container, false);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1234) {
+
+            if (resultCode == RESULT_OK) {
+
+                getDeviceLocation();
+            }
+
+        }
     }
 
     @Override
@@ -110,26 +131,80 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
         icon = BitmapDescriptorFactory.fromResource(R.drawable.primary_marker);
 
         if (getContext() != null) {
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
         }
 
-        setSupGoogleClient();
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.near_me_map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.near_me_map);
         mapFragment.getMapAsync(this);
     }
 
-    private void setSupGoogleClient() {
+    @SuppressLint("MissingPermission")
+    private void getDeviceLocation() {
 
-        googleApiClient = new GoogleApiClient.Builder(getContext())
-                .enableAutoManage(getActivity(),this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
 
-        googleApiClient.connect();
+                if (task.isSuccessful()) {
+
+                    mLastKnownLocation = task.getResult();
+
+                    if (mLastKnownLocation !=null) {
+
+                        mMap.moveCamera(CameraUpdateFactory
+                                                .newLatLngZoom(
+                                                        new LatLng(mLastKnownLocation.getLatitude(),
+                                                                mLastKnownLocation.getLongitude()),16.0f));
+
+                    }else {
+
+                        // if null, request for the updated location
+                        final LocationRequest locationRequest = LocationRequest.create();
+
+                        locationRequest.setInterval(10000);
+
+                        locationRequest.setFastestInterval(5000);
+
+                        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+                        locationCallback = new LocationCallback(){
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+
+                                super.onLocationResult(locationResult);
+
+                                if (locationResult == null) {
+
+                                    return;
+
+                                }
+
+                                mLastKnownLocation = locationResult.getLastLocation();
+
+                                mMap.moveCamera(CameraUpdateFactory
+                                                        .newLatLngZoom(
+                                                                new LatLng(mLastKnownLocation.getLatitude(),
+                                                                        mLastKnownLocation.getLongitude()),16.0f));
+
+                            }
+                        };
+
+                        fusedLocationProviderClient.requestLocationUpdates(locationRequest,
+                                locationCallback, null);
+                    }
+
+
+                }else{
+
+                    Toast.makeText(getContext(), "Unable to get last location",
+                            Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        });
+
     }
 
     @Override
@@ -150,10 +225,7 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
 
             getEvents();
 
-            float zoomLevel = 12.0f; //This goes up to 21
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-25.842858,28.119745),
-                    zoomLevel));
 
             if (!success) {
                 Log.e(TAG, "Style parsing failed.");
@@ -170,9 +242,9 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
 
                 map.setMyLocationEnabled(true);
 
-                getMyLocation();
+                checkIfGpsIsEnable();
 
-                getEvents();
+                // getEvents();
 
 
             }
@@ -182,12 +254,57 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
 
     }
 
+    private void checkIfGpsIsEnable() {
+        // chexking if GPS is enabled
+        LocationRequest locationRequest = LocationRequest.create();
+
+        locationRequest.setInterval(10000);
+
+        locationRequest.setFastestInterval(5000);
+
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                                                          .addLocationRequest(locationRequest);
+
+        SettingsClient settingsClient = LocationServices.getSettingsClient(getContext());
+
+        Task<LocationSettingsResponse> task = settingsClient.checkLocationSettings(builder.build());
+
+        task.addOnSuccessListener(getActivity(), new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+
+                getDeviceLocation();
+
+            }
+        });
+
+        task.addOnFailureListener(getActivity(), new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                if ( e instanceof ResolvableApiException) {
+
+                    ResolvableApiException resolvableApiException = (ResolvableApiException) e;
+
+                    try {
+                        resolvableApiException.startResolutionForResult(getActivity(), 1234);
+                    } catch (IntentSender.SendIntentException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+            }
+        });
+    }
+
 
     private void getEvents() {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("events")
+        db.collection("vibes")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
@@ -238,135 +355,6 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
        intent.putExtra("EVENT_ID", marker.getSnippet());
 
        startActivity(intent);
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        mLastKnownLocation = location;
-
-       // mMap.clear();
-
-        if (mLastKnownLocation !=null) {
-
-            currentLat = mLastKnownLocation.getLatitude();
-
-            currentLng = mLastKnownLocation.getLongitude();
-
-            LatLng latLng = new LatLng(currentLat,currentLng);
-
-            BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.icon_hot_vibes);
-
-            MarkerOptions markerOptions = new MarkerOptions();
-
-            markerOptions.position(latLng);
-
-            markerOptions.title("You Are Here");
-
-            markerOptions.icon(icon);
-
-            mMap.addMarker(markerOptions);
-
-            getEvents();
-
-            float zoomLevel = 16.0f; //This goes up to 21
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
-        }
-    }
-
-    private void getNearByEvents() {
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-        getMyLocation();
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    private void getMyLocation(){
-        if(googleApiClient!=null) {
-            if (googleApiClient.isConnected()) {
-                int permissionLocation = ContextCompat.checkSelfPermission(getContext(),
-                        Manifest.permission.ACCESS_FINE_LOCATION);
-                if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
-                    mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-                    LocationRequest locationRequest = new LocationRequest();
-                    locationRequest.setInterval(3000);
-                    locationRequest.setFastestInterval(3000);
-                    locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                    LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                            .addLocationRequest(locationRequest);
-                    builder.setAlwaysShow(true);
-                    LocationServices.FusedLocationApi
-                            .requestLocationUpdates(googleApiClient, locationRequest, this);
-                    PendingResult<LocationSettingsResult> result =
-                            LocationServices.SettingsApi
-                                    .checkLocationSettings(googleApiClient, builder.build());
-                    result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-
-                        @Override
-                        public void onResult(LocationSettingsResult result) {
-                            final Status status = result.getStatus();
-                            switch (status.getStatusCode()) {
-                                case LocationSettingsStatusCodes.SUCCESS:
-                                    // All location settings are satisfied.
-                                    // You can initialize location requests here.
-                                    int permissionLocation = ContextCompat
-                                            .checkSelfPermission(getContext(),
-                                                    Manifest.permission.ACCESS_FINE_LOCATION);
-                                    if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
-
-
-                                        mLastKnownLocation = LocationServices.FusedLocationApi
-                                                .getLastLocation(googleApiClient);
-
-                                        LatLng latLng = new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude());
-                                        float zoomLevel = 13.0f; //This goes up to 21
-                                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
-
-                                    }
-                                    break;
-                                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                    // Location settings are not satisfied.
-                                    // But could be fixed by showing the user a dialog.
-                                    try {
-                                        // Show the dialog by calling startResolutionForResult(),
-                                        // and check the result in onActivityResult().
-                                        // Ask to turn on GPS automatically
-                                        status.startResolutionForResult(getActivity(),
-                                                REQUEST_CHECK_GPS);
-
-
-                                    } catch (IntentSender.SendIntentException e) {
-                                        // Ignore the error.
-                                    }
-
-
-                                    break;
-                                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                    // Location settings are not satisfied.
-                                    // However, we have no way
-                                    // to fix the
-                                    // settings so we won't show the dialog.
-                                    // finish();
-                                    break;
-                            }
-                        }
-                    });
-
-                }
-            }
-        }
     }
 
 }

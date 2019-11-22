@@ -36,6 +36,8 @@ public class EventsByCategoryActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
 
+    private String category;
+
     @Override
     protected void attachBaseContext(Context newBase) {
 
@@ -58,7 +60,16 @@ public class EventsByCategoryActivity extends AppCompatActivity {
             }
         });
 
-        String category = getIntent().getStringExtra("CATEGORY").toUpperCase().trim();
+
+        category = getIntent().getStringExtra("CATEGORY");
+
+        if (category !=null) {
+
+            category.trim().toUpperCase();
+        }else{
+
+            finish();
+        }
 
 
         setSupportActionBar(toolbar);
