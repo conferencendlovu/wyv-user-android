@@ -73,14 +73,13 @@ import za.co.whatsyourvibe.user.adapters.SlidingImageAdapter;
 import za.co.whatsyourvibe.user.models.Event;
 import za.co.whatsyourvibe.user.models.User;
 
-public class EventDetailsActivity extends AppCompatActivity implements OnMapReadyCallback,
-        LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class EventDetailsActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private static final String TAG = "EventDetailsActivity";
 
     private Button btnShareVibe, btnRateVibe, btnCheckIn;
 
-    private TextView title, overview, date, time;
+    private TextView title, overview, date, time, tvRestrictions;
 
     private TextView share, going, rate, tvEarlyBird, tvStandard, tvVip, tvGroup,tvVideoLabel;
 
@@ -94,11 +93,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private float lat, lng, myLat, myLng;
 
-    private final static int REQUEST_CHECK_GPS = 123;
-
-    private Location mLastKnownLocation;
-
-    private GoogleApiClient googleApiClient;
 
     private String eventId;
 
@@ -139,6 +133,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         mAuth = FirebaseAuth.getInstance();
 
+        event = (Event) getIntent().getSerializableExtra("EVENT");
+
         setContentView(R.layout.activity_event_details);
 
         Toolbar toolbar = findViewById(R.id.event_details_toolbar);
@@ -171,11 +167,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
             getCurrentUserEventsActivity(mAuth.getCurrentUser().getUid());
         }
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.event_details_map);
-        mapFragment.getMapAsync(this);
-
-        setSupGoogleClient();
 
     }
 
@@ -213,9 +204,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private void loadData() {
 
-        event = (Event) getIntent().getSerializableExtra("EVENT");
-
-      urls = new ArrayList<>();
+        urls = new ArrayList<>();
 
         if (event !=null) {
 
@@ -286,11 +275,20 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
             tvGroup.setText("R " + event.getGroup());
 
 
+            tvRestrictions.setText("Age: " + event.getAge() +
+                                           "\nAlcohol: " + event.getAlcohol() +
+                                           "\nSmoking: " + event.getSmoking());
+
+
             mTitle.setText(event.getTitle());
 
             lat = event.getLat();
 
             lng  = event.getLng();
+
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                                                                          .findFragmentById(R.id.event_details_map);
+            mapFragment.getMapAsync(this);
 
             if (event.getVideoUrl() != null) {
 
@@ -433,7 +431,39 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
             // get details from the EVENT_ID extra
             String eventId = getIntent().getStringExtra("EVENT_ID");
 
-            // run operation to query the database and get details
+            FirebaseFirestore eventRef = FirebaseFirestore.getInstance();
+
+            eventRef.collection("vibes")
+                    .document(eventId)
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                            if (documentSnapshot.exists()) {
+
+                                event = documentSnapshot.toObject(Event.class);
+
+                                loadData();
+                            }else{
+
+                                Toast.makeText(EventDetailsActivity.this, "Unable to retrieve " +
+                                                                                  "event details " +
+                                                                                  "at this time. " +
+                                                                                  "Try again",
+                                        Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    Toast.makeText(EventDetailsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                    finish();
+                }
+            });
         }
 
 
@@ -716,6 +746,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         tvVideoLabel = findViewById(R.id.event_details_video_label);
 
+        tvRestrictions = findViewById(R.id.event_details_tvEventRestrictions);
+
        // coverImage = findViewById(R.id.event_details_coverImage);
 
     }
@@ -727,7 +759,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         LatLng eventLocation = new LatLng(lat, lng);
 
-        float zoomLevel = 11.0f; //This goes up to 21
+        float zoomLevel = 15.0f; //This goes up to 21
 
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.primary_marker);
 
@@ -738,122 +770,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(eventLocation, zoomLevel));
 
-    }
-
-    private void setSupGoogleClient() {
-
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this,this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
-        googleApiClient.connect();
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-        getMyLocation();
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        mLastKnownLocation = location;
-
-        if (mLastKnownLocation !=null) {
-
-            myLat = (float) mLastKnownLocation.getLatitude();
-
-            myLng = (float) mLastKnownLocation.getLongitude();
-        }
-
-    }
-
-    private void getMyLocation(){
-        if(googleApiClient!=null) {
-            if (googleApiClient.isConnected()) {
-                int permissionLocation = ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_FINE_LOCATION);
-                if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
-                    mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-                    LocationRequest locationRequest = new LocationRequest();
-                    locationRequest.setInterval(3000);
-                    locationRequest.setFastestInterval(3000);
-                    locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                    LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                            .addLocationRequest(locationRequest);
-                    builder.setAlwaysShow(true);
-                    LocationServices.FusedLocationApi
-                            .requestLocationUpdates(googleApiClient, locationRequest, this);
-                    PendingResult<LocationSettingsResult> result =
-                            LocationServices.SettingsApi
-                                    .checkLocationSettings(googleApiClient, builder.build());
-                    result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-
-                        @Override
-                        public void onResult(LocationSettingsResult result) {
-                            final Status status = result.getStatus();
-                            switch (status.getStatusCode()) {
-                                case LocationSettingsStatusCodes.SUCCESS:
-                                    // All location settings are satisfied.
-                                    // You can initialize location requests here.
-                                    int permissionLocation = ContextCompat
-                                            .checkSelfPermission(getApplicationContext(),
-                                                    Manifest.permission.ACCESS_FINE_LOCATION);
-                                    if (permissionLocation == PackageManager.PERMISSION_GRANTED) {
-
-
-                                        mLastKnownLocation = LocationServices.FusedLocationApi
-                                                .getLastLocation(googleApiClient);
-
-
-                                    }
-                                    break;
-                                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                    // Location settings are not satisfied.
-                                    // But could be fixed by showing the user a dialog.
-                                    try {
-                                        // Show the dialog by calling startResolutionForResult(),
-                                        // and check the result in onActivityResult().
-                                        // Ask to turn on GPS automatically
-                                        status.startResolutionForResult(EventDetailsActivity.this,
-                                                REQUEST_CHECK_GPS);
-
-
-                                    } catch (IntentSender.SendIntentException e) {
-                                        // Ignore the error.
-                                    }
-
-
-                                    break;
-                                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                    // Location settings are not satisfied.
-                                    // However, we have no way
-                                    // to fix the
-                                    // settings so we won't show the dialog.
-                                    // finish();
-                                    break;
-                            }
-                        }
-                    });
-
-                }
-            }
-        }
     }
 
     private void showVibeRater() {

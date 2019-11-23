@@ -72,6 +72,7 @@ import za.co.whatsyourvibe.user.MainActivity;
 import za.co.whatsyourvibe.user.R;
 import za.co.whatsyourvibe.user.activities.EventDetailsActivity;
 import za.co.whatsyourvibe.user.adapters.CustomInfoWindowAdapter;
+import za.co.whatsyourvibe.user.models.Event;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -223,7 +224,7 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
                     MapStyleOptions.loadRawResourceStyle(
                             getContext(), R.raw.map_primary_style));
 
-            getEvents();
+            // getEvents();
 
 
 
@@ -244,7 +245,7 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
 
                 checkIfGpsIsEnable();
 
-                // getEvents();
+                getEvents();
 
 
             }
@@ -305,6 +306,7 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("vibes")
+                .whereEqualTo("status","Active")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
@@ -321,18 +323,21 @@ public class NearMeFragment extends Fragment implements OnMapReadyCallback, Goog
 
                             for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
 
-                                double lat = (double) doc.get("latitude");
+                                Event vibe = doc.toObject(Event.class);
 
-                                double lng = (double) doc.get("longitude");
+                                //double lat = (double) doc.get("lat");
 
-                                String title = (String) doc.get("name");
+                                //double lng = (double) doc.get("long");
+
+
+                                String title = vibe.getTitle();
 
                                 String eventId = doc.getId();
 
-                                LatLng vibe = new LatLng(lat, lng);
+                                LatLng vibeCoordinate = new LatLng(vibe.getLat(), vibe.getLng());
 
                                 mMap.addMarker(new MarkerOptions()
-                                        .position(vibe)
+                                        .position(vibeCoordinate)
                                         .icon(icon)
                                         .snippet(eventId)
                                         .title(title));
