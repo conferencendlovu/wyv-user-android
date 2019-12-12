@@ -348,9 +348,9 @@ public class ProfileActivity extends AppCompatActivity {
 
                 user.setGender(gender.getSelectedItem().toString());
 
-                user.setRated(Integer.parseInt(tvVibesRated.getText().toString()));
+                user.setRated(Integer.parseInt(tvVibesRated.getText()+""));
 
-                user.setPoints(Integer.parseInt(tvVibePoints.getText().toString()));
+                user.setPoints(Integer.parseInt(tvVibePoints.getText()+ ""));
 
                 updateFirebaseProfile(user,alertDialog);
 
