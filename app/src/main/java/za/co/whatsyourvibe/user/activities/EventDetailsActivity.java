@@ -613,6 +613,27 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         final FirebaseFirestore userCheckins = FirebaseFirestore.getInstance();
 
+        Location.distanceBetween(
+                lat,
+                lng,
+                myLat,
+                myLng,
+                distance);
+
+        Location vibeLocation = new Location("");
+
+        vibeLocation.setLatitude(lat);
+
+        vibeLocation.setLongitude(lng);
+
+        Location viberPosition = new Location("");
+
+        viberPosition.setLatitude(myLat);
+
+        viberPosition.setLongitude(myLng);
+
+        final float distanceInMeters = vibeLocation.distanceTo(viberPosition);
+
         userCheckins.collection("events_raters")
                 .document(mAuth.getCurrentUser().getUid())
                 .collection("my_ratings")
@@ -629,7 +650,26 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                                     Toast.LENGTH_SHORT).show();
                         }else {
 
-                            showVibeRater();
+                            if ((int) distanceInMeters > 100) {
+
+                                // setup the alert builder
+                                AlertDialog.Builder builder =
+                                        new AlertDialog.Builder(EventDetailsActivity.this);
+                                builder.setTitle("Rate Vibe");
+                                builder.setMessage("You are not at the event, you are not allowed to rate");
+
+                                // add a button
+                                builder.setPositiveButton("DISMISS", null);
+
+                                // create and show the alert dialog
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
+
+                            }else{
+
+                                showVibeRater();
+
+                            }
 
                         }
 
@@ -643,13 +683,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                     }
                 });
 
-
-        Location.distanceBetween(
-                lat,
-                lng,
-                myLat,
-                myLng,
-                distance);
 
 
 //        if ((int) distance[0]> 100) {
@@ -679,6 +712,21 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
         // check if user has not check_in before
         final FirebaseFirestore userCheckins = FirebaseFirestore.getInstance();
 
+
+        Location vibeLocation = new Location("");
+
+        vibeLocation.setLatitude(lat);
+
+        vibeLocation.setLongitude(lng);
+
+        Location viberPosition = new Location("");
+
+        viberPosition.setLatitude(myLat);
+
+        viberPosition.setLongitude(myLng);
+
+        final float distanceInMeters = vibeLocation.distanceTo(viberPosition);
+
         userCheckins.collection("viber_checkins")
                 .document(mAuth.getCurrentUser().getUid())
                 .collection("my_checkins")
@@ -695,40 +743,59 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                         }else{
 
 
-                            FirebaseFirestore eventsRef = FirebaseFirestore.getInstance();
+                            if ((int) distanceInMeters > 100) {
 
-                            if (mAuth.getCurrentUser() !=null) {
+                                // setup the alert builder
+                                AlertDialog.Builder builder =
+                                        new AlertDialog.Builder(EventDetailsActivity.this);
+                                builder.setTitle("Check In");
+                                builder.setMessage("You are not at the event, you are not allowed to check in");
 
-                                int totalCheckin = event.getGoing();
+                                // add a button
+                                builder.setPositiveButton("DISMISS", null);
 
-                                totalCheckin = totalCheckin + 1;
+                                // create and show the alert dialog
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
 
-                                going.setText(totalCheckin+"");
+                            }else{
 
-                                eventsRef.collection("vibes")
-                                        .document(event.getId())
-                                        .update("going",totalCheckin);
+                                FirebaseFirestore eventsRef = FirebaseFirestore.getInstance();
+
+                                if (mAuth.getCurrentUser() !=null) {
+
+                                    int totalCheckin = event.getGoing();
+
+                                    totalCheckin = totalCheckin + 1;
+
+                                    going.setText(totalCheckin+"");
+
+                                    eventsRef.collection("vibes")
+                                            .document(event.getId())
+                                            .update("going",totalCheckin);
 
 
-                                // update user rating points
-                                vibePointsBalance = vibePointsBalance + 10;
+                                    // update user rating points
+                                    vibePointsBalance = vibePointsBalance + 10;
 
-                                FirebaseFirestore updateUserPoints = FirebaseFirestore.getInstance();
+                                    FirebaseFirestore updateUserPoints = FirebaseFirestore.getInstance();
 
-                                updateUserPoints.collection("vibers")
-                                        .document(mAuth.getCurrentUser().getUid())
-                                        .update("points",vibePointsBalance);
+                                    updateUserPoints.collection("vibers")
+                                            .document(mAuth.getCurrentUser().getUid())
+                                            .update("points",vibePointsBalance);
 
 
-                                HashMap<String, Object> userChecking = new HashMap<>();
+                                    HashMap<String, Object> userChecking = new HashMap<>();
 
-                                userChecking.put("checkin",mAuth.getCurrentUser().getUid());
+                                    userChecking.put("checkin",mAuth.getCurrentUser().getUid());
 
-                                userCheckins.collection("viber_checkins")
-                                        .document(mAuth.getCurrentUser().getUid())
-                                        .collection("my_checkins")
-                                        .document(event.getId())
-                                        .set(userChecking);
+                                    userCheckins.collection("viber_checkins")
+                                            .document(mAuth.getCurrentUser().getUid())
+                                            .collection("my_checkins")
+                                            .document(event.getId())
+                                            .set(userChecking);
+                                }
+
                             }
 
                         }
@@ -741,33 +808,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                         Toast.makeText(EventDetailsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        Location.distanceBetween(
-                lat,
-                lng,
-                myLat,
-                myLng,
-                distance);
-
-//        if ((int) distance[0]> 100) {
-//
-//            // setup the alert builder
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//            builder.setTitle("Check In");
-//            builder.setMessage("You are not at the event, you are not allowed to check in");
-//
-//            // add a button
-//            builder.setPositiveButton("DISMISS", null);
-//
-//            // create and show the alert dialog
-//            AlertDialog dialog = builder.create();
-//            dialog.show();
-//
-//        }else{
-
-
-       // }
-
 
     }
 

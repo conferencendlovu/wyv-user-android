@@ -9,8 +9,8 @@ android {
         applicationId "za.co.whatsyourvibe.user"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 7
-        versionName "1.0.0-beta"
+        versionCode 8
+        versionName "1.0.1-beta"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
