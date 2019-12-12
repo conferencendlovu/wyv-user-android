@@ -61,7 +61,7 @@ public class EventsByTrending extends RecyclerView.Adapter<EventsByTrending.MyVi
 
         myViewHolder.title.setText(eventList.get(position).getTitle());
 
-        myViewHolder.going.setText(eventList.get(position).getCheckins()+"");
+        myViewHolder.going.setText(eventList.get(position).getGoing()+"");
 
 //        myViewHolder.ratingBar.setRating((float)eventList.get(position).getRate());
 
@@ -91,8 +91,6 @@ public class EventsByTrending extends RecyclerView.Adapter<EventsByTrending.MyVi
 
         TextView title, going;
 
-        RatingBar ratingBar;
-
         ImageView photo, poster;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -104,8 +102,6 @@ public class EventsByTrending extends RecyclerView.Adapter<EventsByTrending.MyVi
             going = itemView.findViewById(R.id.item_event_trending_going);
 
             photo = itemView.findViewById(R.id.item_event_trending_photo);
-
-            ratingBar = itemView.findViewById(R.id.item_event_trending_rating);
 
             poster = itemView.findViewById(R.id.item_event_trending_poster);
 

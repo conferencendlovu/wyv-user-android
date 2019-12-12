@@ -120,6 +120,16 @@ public class ProfileActivity extends AppCompatActivity {
 
         initViews();
 
+        Button updateProfileButton = findViewById(R.id.profile_btnViewProfile);
+
+        updateProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showUpdateProfileDialog(currentUserId);
+            }
+        });
+
     }
 
     private void getUserPoints(String currentUserId) {
@@ -144,6 +154,7 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
 
+                        Toast.makeText(ProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -175,6 +186,8 @@ public class ProfileActivity extends AppCompatActivity {
                             //vibePointsGauge.setEndValue(270);
 
                             if (documentSnapshot.get("photoUrl") !=null) {
+
+                                imageUrl = documentSnapshot.get("photoUrl").toString();
 
                                 Glide.with(getApplicationContext())
                                         .load(documentSnapshot.get("photoUrl"))
@@ -219,6 +232,41 @@ public class ProfileActivity extends AppCompatActivity {
         final Spinner province = dialogView.findViewById(R.id.dialog_update_profile_spnProvince);
 
         Button updateProfile = dialogView.findViewById(R.id.dialog_update_profile_btnUpdateProfile);
+
+        FirebaseFirestore profileRef = FirebaseFirestore.getInstance();
+
+        profileRef.collection("vibers")
+                .document(currentUserId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        if (documentSnapshot.exists()) {
+
+                            User user = documentSnapshot.toObject(User.class);
+
+                            displayName.setText(user.getDisplayName());
+
+                            emailAddress.setText(user.getEmailAddress());
+
+                            age.setText(user.getAge());
+
+                            city.setText(user.getTown());
+
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Toast.makeText(ProfileActivity.this, "Unable to retrieve profile details " +
+                                                                     "at this time",
+                                Toast.LENGTH_SHORT).show();
+
+                    }
+                });
 
 
         //setting the view of the builder to our custom view that we already inflated
@@ -288,6 +336,8 @@ public class ProfileActivity extends AppCompatActivity {
 
                 user.setDisplayName(displayName.getText().toString());
 
+                user.setPhotoUrl(imageUrl);
+
                 user.setEmailAddress(emailAddress.getText().toString());
 
                 user.setAge(age.getText().toString());
@@ -299,6 +349,8 @@ public class ProfileActivity extends AppCompatActivity {
                 user.setGender(gender.getSelectedItem().toString());
 
                 user.setRated(Integer.parseInt(tvVibesRated.getText().toString()));
+
+                user.setPoints(Integer.parseInt(tvVibePoints.getText().toString()));
 
                 updateFirebaseProfile(user,alertDialog);
 

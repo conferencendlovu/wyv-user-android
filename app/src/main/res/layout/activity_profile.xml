@@ -21,12 +21,12 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_ivPhoto"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:padding="5dp"
             android:src="@drawable/default_profile_image"
             app:civ_border_color="#cccc00"
@@ -143,6 +143,14 @@
         </LinearLayout>
 
     </LinearLayout>
-
+    <Button
+        android:id="@+id/profile_btnViewProfile"
+        android:text="View Profile"
+        android:background="@drawable/primary_button_background"
+        android:textColor="#fff"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="15dp"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

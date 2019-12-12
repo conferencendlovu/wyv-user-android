@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
@@ -264,20 +265,60 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
             share.setText(iShares+"");
 
-            rate.setText(event.getRating()+"");
+            rate.setText((int)event.getRating()+"%");
 
-            tvEarlyBird.setText("R " + event.getEarlyBird());
+            String earlyBird = "0.00";
+            String standard = "0.00";
+            String vip = "0.00";
+            String group = "0.00";
 
-            tvStandard.setText("R " + event.getStandard());
+            // check ticket prices
+            if (event.getEarlyBird() !=null) {
+                tvEarlyBird.setText("R " + event.getEarlyBird());
+            }else{
+                tvEarlyBird.setText("R " + earlyBird);
+            }
 
-            tvVip.setText("R " + event.getVip());
+            if (event.getStandard() !=null) {
+                tvStandard.setText("R " + event.getStandard());
+            }else{
+                tvStandard.setText("R " + standard);
+            }
 
-            tvGroup.setText("R " + event.getGroup());
+            if (event.getVip() !=null) {
+                tvVip.setText("R " + event.getVip());
+            }else{
+                tvVip.setText("R " + vip);
+            }
+
+            if (event.getGroup() !=null) {
+                tvGroup.setText("R " + event.getGroup());
+            }else{
+                tvGroup.setText("R " + group);
+            }
 
 
-            tvRestrictions.setText("Age: " + event.getAge() +
-                                           "\nAlcohol: " + event.getAlcohol() +
-                                           "\nSmoking: " + event.getSmoking());
+
+            String age = "Unrestricted";
+            String smoking = "None";
+            String alcohol= "None";
+            // check age restrictions if not null
+            if (event.getAge() !=null ) {
+                age = event.getAge();
+
+            }
+            if (event.getAlcohol() !=null ) {
+                alcohol = event.getAlcohol();
+
+            }
+            if (event.getSmoking() !=null ) {
+                smoking = event.getSmoking();
+
+            }
+
+            tvRestrictions.setText("Age: " + age +
+                                           "\nAlcohol: " + alcohol +
+                                           "\nSmoking: " + smoking );
 
 
             mTitle.setText(event.getTitle());
@@ -423,9 +464,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                 btnCall.setVisibility(View.GONE);
             }
 
-
-
-
         } else {
 
             // get details from the EVENT_ID extra
@@ -465,7 +503,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                 }
             });
         }
-
 
     }
 
@@ -533,8 +570,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
                 checkIn();
 
-                Toast.makeText(EventDetailsActivity.this, "Working", Toast.LENGTH_SHORT).show();
-
             }
         });
 
@@ -563,7 +598,7 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Share This Vibe");
-        builder.setMessage("Feature not available in this version.");
+        builder.setMessage("Feature not available in this version, coming on future versions.");
 
         // add a button
         builder.setPositiveButton("DISMISS", null);
@@ -576,6 +611,39 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
     private void rateVibe() {
 
+        final FirebaseFirestore userCheckins = FirebaseFirestore.getInstance();
+
+        userCheckins.collection("events_raters")
+                .document(mAuth.getCurrentUser().getUid())
+                .collection("my_ratings")
+                .document(event.getId())
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                        if ( documentSnapshot.exists()) {
+
+                            Toast.makeText(EventDetailsActivity.this, "You have already rated " +
+                                                                              "this vibe",
+                                    Toast.LENGTH_SHORT).show();
+                        }else {
+
+                            showVibeRater();
+
+                        }
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Toast.makeText(EventDetailsActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
         Location.distanceBetween(
                 lat,
                 lng,
@@ -583,7 +651,6 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                 myLng,
                 distance);
 
-        showVibeRater();
 
 //        if ((int) distance[0]> 100) {
 //
@@ -635,6 +702,8 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
                                 int totalCheckin = event.getGoing();
 
                                 totalCheckin = totalCheckin + 1;
+
+                                going.setText(totalCheckin+"");
 
                                 eventsRef.collection("vibes")
                                         .document(event.getId())
@@ -840,7 +909,17 @@ public class EventDetailsActivity extends AppCompatActivity implements OnMapRead
 
             HashMap<String, Object> eventRating = new HashMap<>();
 
-            double newRate = (rating + event.getRating())/ 2;
+            double newRate = 0.00;
+
+            if (event.getRating() == 0) {
+
+                newRate = rating;
+
+            }else {
+
+                newRate = (rating + event.getRating())/ 2;
+
+            }
 
             eventRating.put("rating", newRate);
 
