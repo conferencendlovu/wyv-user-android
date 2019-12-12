@@ -13,144 +13,159 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <RelativeLayout
-        android:background="#fff"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_weight="30"
-        android:layout_height="0dp">
+        android:layout_height="wrap_content">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_ivPhoto"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:padding="5dp"
-            android:src="@drawable/default_profile_image"
-            app:civ_border_color="#cccc00"
-            app:civ_border_width="1dp" />
-
-        <ProgressBar
-            android:id="@+id/user_profile_progressBar"
-            android:visibility="gone"
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:background="@color/color_primary_font"
-        android:layout_weight="70"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
 
         <LinearLayout
-            android:layout_weight="0.5"
             android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
 
             <RelativeLayout
-                android:layout_marginTop="40dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:background="#fff"
+                android:layout_width="match_parent"
+                android:layout_weight="30"
+                android:layout_height="0dp">
 
-                <pl.pawelkleczkowski.customgauge.CustomGauge
-                    android:id="@+id/profile_vibesPointsGauge"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile_ivPhoto"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="10dp"
-                    app:gaugePointStartColor="@color/color_gradient_start"
-                    app:gaugePointEndColor="@color/color_gradient_end"
-                    app:gaugeStartAngle="135"
-                    app:gaugeStrokeCap="ROUND"
-                    app:gaugeStrokeColor="#fff"
-                    app:gaugeStrokeWidth="10dp"
-                    app:gaugeStartValue="0"
-                    app:gaugeEndValue="100"
-                    app:gaugeSweepAngle="270" />
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:padding="5dp"
+                    android:src="@drawable/default_profile_image"
+                    app:civ_border_color="#cccc00"
+                    app:civ_border_width="1dp" />
 
-                <TextView
-                    android:id="@+id/profile_tvPoints"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="52sp"
-                    android:text="0"
+                <ProgressBar
+                    android:id="@+id/user_profile_progressBar"
+                    android:visibility="gone"
                     android:layout_centerInParent="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:ignore="MissingPrefix" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
             </RelativeLayout>
 
-            <TextView
-                android:layout_marginTop="5dp"
-                android:gravity="center_horizontal"
+            <LinearLayout
+                android:background="@color/color_primary_font"
+                android:layout_weight="70"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+
+                    <RelativeLayout
+                        android:layout_marginTop="40dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <pl.pawelkleczkowski.customgauge.CustomGauge
+                            android:id="@+id/profile_vibesPointsGauge"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:layout_centerHorizontal="true"
+                            android:paddingBottom="10dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:paddingTop="10dp"
+                            app:gaugePointStartColor="@color/color_gradient_start"
+                            app:gaugePointEndColor="@color/color_gradient_end"
+                            app:gaugeStartAngle="135"
+                            app:gaugeStrokeCap="ROUND"
+                            app:gaugeStrokeColor="#fff"
+                            app:gaugeStrokeWidth="10dp"
+                            app:gaugeStartValue="0"
+                            app:gaugeEndValue="100"
+                            app:gaugeSweepAngle="270" />
+
+                        <TextView
+                            android:id="@+id/profile_tvPoints"
+                            android:gravity="center_horizontal"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="52sp"
+                            android:text="0"
+                            android:layout_centerInParent="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:ignore="MissingPrefix" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:layout_marginTop="5dp"
+                        android:gravity="center_horizontal"
+                        android:textColor="#fff"
+                        android:textSize="26sp"
+                        android:text="VIBES POINTS"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:ignore="MissingPrefix" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_weight="0.5"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/profile_displayName"
+                        android:layout_marginTop="50dp"
+                        android:gravity="center_horizontal"
+                        android:textAllCaps="true"
+                        android:textColor="#fff"
+                        android:textSize="28sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:ignore="MissingPrefix" />
+
+                    <TextView
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="20dp"
+                        android:textColor="@color/color_text_secondary"
+                        android:textSize="58sp"
+                        android:id="@+id/profile_tvVibesRated"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:ignore="MissingPrefix" />
+
+                    <TextView
+                        android:gravity="center_horizontal"
+                        android:layout_marginTop="20dp"
+                        android:textColor="#fff"
+                        android:textSize="18sp"
+                        android:text="VIBE RATED"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <Button
+                android:id="@+id/profile_btnViewProfile"
+                android:text="View Profile"
+                android:background="@drawable/primary_button_background"
                 android:textColor="#fff"
-                android:textSize="26sp"
-                android:text="VIBES POINTS"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:ignore="MissingPrefix" />
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_weight="0.5"
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/profile_displayName"
-                android:layout_marginTop="50dp"
-                android:gravity="center_horizontal"
-                android:textAllCaps="true"
-                android:textColor="#fff"
-                android:textSize="28sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:ignore="MissingPrefix" />
-
-            <TextView
-                android:gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:textColor="@color/color_text_secondary"
-                android:textSize="58sp"
-                android:id="@+id/profile_tvVibesRated"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:ignore="MissingPrefix" />
-
-            <TextView
-                android:gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:textColor="#fff"
-                android:textSize="18sp"
-                android:text="VIBE RATED"
-                android:layout_width="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="15dp"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>
 
-    </LinearLayout>
-    <Button
-        android:id="@+id/profile_btnViewProfile"
-        android:text="View Profile"
-        android:background="@drawable/primary_button_background"
-        android:textColor="#fff"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="15dp"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content" />
+    </ScrollView>
 
 </LinearLayout>
